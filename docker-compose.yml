@@ -1,0 +1,12 @@
+services:
+  lox:
+    build: .
+    container_name: lox-interpreter
+    volumes:
+      - .:/app
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    environment:
+      - PYTHONPATH=/app
+    command: /bin/bash
