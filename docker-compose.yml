@@ -4,7 +4,6 @@ services:
     container_name: lox-interpreter
     volumes:
       - .:/app
-      - /app/.venv
     working_dir: /app
     stdin_open: true
     tty: true
