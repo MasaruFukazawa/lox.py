@@ -3,15 +3,11 @@ FROM python:3.12-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies and uv
 RUN apt-get update && apt-get install -y \
-    curl \
     git \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install uv
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.local/bin:$PATH"
+    && rm -rf /var/lib/apt/lists/* \
+    && pip install uv
 
 # Copy project files
 COPY . .
