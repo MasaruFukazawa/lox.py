@@ -3,7 +3,7 @@ COMPOSE := docker compose
 EXEC    := $(COMPOSE) exec $(SERVICE)
 RUN     := $(COMPOSE) run --rm $(SERVICE)
 
-.PHONY: help build up down restart shell ps logs test lint format run clean precommit-install precommit-uninstall precommit
+.PHONY: help build up down restart shell ps logs test lint format typecheck run clean precommit-install precommit-uninstall precommit precommit-staged
 
 help:
 	@echo "Targets:"
@@ -17,10 +17,12 @@ help:
 	@echo "  test     - run pytest inside the running container"
 	@echo "  lint     - run ruff check inside the running container"
 	@echo "  format   - run ruff format inside the running container"
+	@echo "  typecheck - run mypy inside the running container"
 	@echo "  run      - run the lox interpreter (ARGS=... to pass args)"
 	@echo "  precommit-install   - point git hooks to .githooks (runs in container)"
 	@echo "  precommit-uninstall - reset git hooks path to default"
 	@echo "  precommit           - run all pre-commit hooks on all files (in container)"
+	@echo "  precommit-staged    - run pre-commit hooks on staged files (used by git hook)"
 	@echo "  clean    - remove caches"
 
 build:
@@ -52,6 +54,9 @@ lint:
 format:
 	$(EXEC) ruff format $(ARGS) .
 
+typecheck:
+	$(EXEC) mypy $(ARGS)
+
 run:
 	$(EXEC) lox $(ARGS)
 
@@ -66,6 +71,9 @@ precommit-uninstall:
 
 precommit:
 	$(EXEC) pre-commit run --all-files
+
+precommit-staged:
+	$(EXEC) pre-commit run
 
 clean:
 	rm -rf .pytest_cache .ruff_cache

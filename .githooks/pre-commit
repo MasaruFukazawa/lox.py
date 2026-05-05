@@ -1,11 +1,3 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
-SERVICE=lox
-
-if ! docker compose ps --status running --services 2>/dev/null | grep -qx "$SERVICE"; then
-  echo "[pre-commit] '$SERVICE' container is not running. Start it with: make up" >&2
-  exit 1
-fi
-
-exec docker compose exec -T "$SERVICE" pre-commit run --hook-stage pre-commit
+exec make precommit-staged
