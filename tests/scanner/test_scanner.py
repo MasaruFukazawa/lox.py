@@ -43,6 +43,24 @@ class TestScanner:
         scanner.current = 5
         assert scanner.is_at_end() is True
 
+    def test_advance_ok(self) -> None:
+        """current ポインタの位置の文字を返し、ポインタを一文字分進める。"""
+        scanner = Scanner("()")
+
+        assert scanner.advance() == "("
+        assert scanner.current == 1
+
+        assert scanner.advance() == ")"
+        assert scanner.current == 2
+
+    def test_advance_past_end_raises(self) -> None:
+        """source の終端を超えて advance を呼ぶと IndexError を送出する。"""
+        scanner = Scanner("(")
+        scanner.advance()
+
+        with pytest.raises(IndexError):
+            scanner.advance()
+
     def test_scan_tokens(self) -> None:
         """単一文字トークンを順序通りにスキャンし、末尾に EOF を付与すること。"""
         scanner = Scanner("(){},.-+;*")
