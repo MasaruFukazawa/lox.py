@@ -3,6 +3,7 @@ Tests for the Scanner class.
 """
 
 import pytest
+from pydantic import ValidationError
 
 from lox.scanner.exceptions import ScannerError
 from lox.scanner.scanner import Scanner
@@ -13,6 +14,36 @@ class TestScanner:
     """
     Tests for the Scanner class.
     """
+
+    def test_scanner_init_raises(self) -> None:
+        """
+        Scannerクラス初期例外
+        """
+        with pytest.raises(ValidationError):
+            Scanner("")
+
+    def test_is_at_end_init(self) -> None:
+        """ """
+        scanner = Scanner("()")
+        assert scanner.is_at_end() is False
+
+    def test_is_at_end_boundary_ok(self) -> None:
+        """ """
+        scanner = Scanner("()")
+        scanner.current = 1
+        assert scanner.is_at_end() is False
+
+    def test_is_at_end_boundary_error(self) -> None:
+        """ """
+        scanner = Scanner("()")
+        scanner.current = 2
+        assert scanner.is_at_end() is True
+
+    def test_is_at_end_past_boundary(self) -> None:
+        """ """
+        scanner = Scanner("()")
+        scanner.current = 5
+        assert scanner.is_at_end() is True
 
     def test_scan_tokens(self) -> None:
         """

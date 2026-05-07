@@ -2,51 +2,42 @@
 Scanner for the Lox language.
 """
 
-from typing import Any
+from typing import Annotated, Any, Final
 
-from pydantic import BaseModel, Field, validate_call
+from pydantic import Field, validate_call
 
 from lox.scanner.exceptions import ScannerError
 from lox.token.token import Token
 from lox.token.type import TokenType
 
 
-class Scanner(BaseModel):
+class Scanner:
     """
     A scanner for the Lox language.
     """
 
-    source: str = Field(default="")
-    tokens: list[Token] = Field(default_factory=list)
-    start: int = Field(default=0)
-    current: int = Field(default=0)
-    line: int = Field(default=1)
-
     @validate_call
-    def __init__(self, source: str) -> None:
+    def __init__(self, source: Annotated[str, Field(min_length=1)]) -> None:
         """
         Initialize the scanner.
         """
-        super().__init__(source=source)
+        self.source: Final[str] = source
+        self.tokens: Final[list[Token]] = []
+        self.start: int = 0
+        self.current: int = 0
+        self.line: int = 1
 
-    def is_at_end(self) -> bool:
+    def scan_tokens(self) -> list[Token]:
         """
-        Check if the scanner is at the end of the source code.
+        Scan the tokens from the source code.
         """
-        return self.current >= len(self.source)
+        while not self.is_at_end():
+            self.start = self.current
+            self.scan_token()
 
-    def advance(self) -> str:
-        """
-        Advance the scanner to the next character.
-        """
-        self.current += 1
-        return self.source[self.current - 1]
+        self.add_token(TokenType.EOF, None)
 
-    def error(self, message: str) -> None:
-        """
-        Print an error message.
-        """
-        raise ScannerError(message)
+        return self.tokens
 
     def scan_token(self) -> None:
         """
@@ -82,18 +73,6 @@ class Scanner(BaseModel):
 
         return None
 
-    def scan_tokens(self) -> list[Token]:
-        """
-        Scan the tokens from the source code.
-        """
-        while not self.is_at_end():
-            self.start = self.current
-            self.scan_token()
-
-        self.add_token(TokenType.EOF, None)
-
-        return self.tokens
-
     @validate_call
     def add_token(self, token_type: TokenType, literal: Any) -> None:
         """
@@ -107,3 +86,24 @@ class Scanner(BaseModel):
                 line=self.line,
             )
         )
+
+    def is_at_end(self) -> bool:
+        """
+        Check if the scanner is at the end of the source code.
+        """
+        return self.current >= len(self.source)
+
+    def advance(self) -> str:
+        """
+        Advance the scanner to the next character.
+        """
+        c: str = self.source[self.current]
+        self.current += 1
+        return c
+
+    @validate_call
+    def error(self, message: str) -> None:
+        """
+        Print an error message.
+        """
+        raise ScannerError(message)

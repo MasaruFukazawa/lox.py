@@ -4,7 +4,7 @@ Token definitions for the Lox language.
 
 from typing import Any
 
-from pydantic import BaseModel, validate_call
+from pydantic import BaseModel, ConfigDict
 
 from .type import TokenType
 
@@ -20,21 +20,12 @@ class Token(BaseModel):
         line: The line number of the token.
     """
 
+    model_config = ConfigDict(frozen=True)
+
     token_type: TokenType
     lexeme: str
     literal: Any
     line: int
 
-    @validate_call
-    def __init__(
-        self, token_type: TokenType, lexeme: str, literal: Any, line: int
-    ) -> None:
-        """
-        Initialize the token.
-        """
-        super().__init__(
-            token_type=token_type, lexeme=lexeme, literal=literal or None, line=line
-        )
-
     def __str__(self) -> str:
-        return f"{self.type} {self.lexeme} {self.literal}"
+        return f"{self.token_type} {self.lexeme} {self.literal}"

@@ -1,9 +1,9 @@
 """Tests for the Lox lexer."""
 
-from src.lox.lexer import Lexer
+from lox.lexer import Lexer
 
 
-def test_lexer_basic():
+def test_lexer_basic() -> None:
     """Test basic lexer functionality."""
     source = "test"
     lexer = Lexer(source)
