@@ -1,6 +1,7 @@
 SERVICE := lox
 COMPOSE := docker compose
 EXEC    := $(COMPOSE) exec $(SERVICE)
+EXEC_T  := $(COMPOSE) exec -T $(SERVICE)
 RUN     := $(COMPOSE) run --rm $(SERVICE)
 
 .PHONY: help build up down restart shell ps logs test lint format typecheck run clean precommit-install precommit-uninstall precommit precommit-staged
@@ -70,10 +71,10 @@ precommit-uninstall:
 	@echo "git hooks path reset to default"
 
 precommit:
-	$(EXEC) pre-commit run --all-files
+	$(EXEC_T) pre-commit run --all-files
 
 precommit-staged:
-	$(EXEC) pre-commit run
+	$(EXEC_T) pre-commit run
 
 clean:
 	rm -rf .pytest_cache .ruff_cache
